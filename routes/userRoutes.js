@@ -20,3 +20,9 @@ router.post('/register', (req, res) => {
         })
     })
 })
+
+
+
+module.exports = (db) => {
+    return router;
+};
