@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const ejsLayouts = require('express-ejs-layouts');
 const db = require('./models/db'); 
 const userRouter = require('./routes/userRoutes')(db);
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
