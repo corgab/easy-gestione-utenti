@@ -2,9 +2,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const ejsLayouts = require('express-ejs-layouts');
-const db = require('./models/db'); 
+const db = require('./models/db');
 const userRouter = require('./routes/userRoutes')(db);
-const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,11 +17,11 @@ app.use(ejsLayouts);
 // Templating
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-console.log(__dirname)
+console.log(__dirname);
 
 // Rotta principale
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Home' });
+  res.render('index', { title: 'Home' });
 });
 
 // Utilizza il router
@@ -30,5 +29,5 @@ app.use('/', userRouter);
 
 // Avvia il server
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server in esecuzione su http://localhost:${PORT}`);
+  console.log(`Server in esecuzione su http://localhost:${PORT}`);
 });

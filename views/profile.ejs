@@ -1,0 +1,25 @@
+<div class="container mt-5">
+    <h2>Il tuo profilo</h2>
+    <div class="mb-3">
+        <h4>Nome Utente: <%= user.username %></h4>
+        <% if (user.profile_image) { %>
+            <img src="/images/<%= user.profile_image %>" alt="Immagine Profilo" class="img-thumbnail" style="max-width: 200px;">
+        <% } %>
+    </div>
+    <form action="/update/<%= user.id %>" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">Nome Utente</label>
+            <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Nuova Password</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="profile_image">Immagine Profilo</label>
+            <input type="file" class="form-control" id="profile_image" name="profile_image">
+        </div>
+        <button type="submit" class="btn btn-primary">Aggiorna</button>
+    </form>
+    <p class="mt-3"><a href="/">Torna alla homepage</a></p>
+</div>

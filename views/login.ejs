@@ -1,0 +1,25 @@
+<div class="container mt-5">
+    <h2 class="text-center"><%= title %></h2>
+
+    <% if (errorMessage) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= errorMessage %>
+        </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+        <div class="mb-3">
+            <label for="username" class="form-label">Nome utente</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Accedi</button>
+    </form>
+
+    <div class="mt-3">
+        <p>Non hai un account? <a href="/register">Registrati qui</a></p>
+    </div>
+</div>
