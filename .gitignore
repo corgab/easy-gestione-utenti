@@ -10,3 +10,6 @@ Thumbs.db
 
 # EJS cache
 *.ejs~
+
+# Variabili d'ambiente
+.env
