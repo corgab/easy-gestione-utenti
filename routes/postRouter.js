@@ -3,9 +3,6 @@ const router = express.Router();
 const db = require('../models/db');
 
 // Nuovo post
-// In postRouter.js
-
-// nuovo post
 router.get('/posts/create', (req, res) => {
   const userId = req.body.userId || req.cookies.userId;
   res.render('posts/create', {
