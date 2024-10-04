@@ -19,7 +19,7 @@ const upload = multer({ storage: storage });
 
 // Registrazione
 router.get('/register', (req, res) => {
-  res.render('register', { title: 'Registrati', errorMessage: null });
+  res.render('user/register', { title: 'Registrati', errorMessage: null });
 });
 
 router.post('/register', (req, res) => {
@@ -27,7 +27,7 @@ router.post('/register', (req, res) => {
 
   // Password non corrispondono
   if (password !== confirmPassword) {
-    return res.render('register', {
+    return res.render('user/register', {
       title: 'Registrazione',
       errorMessage: 'Le password non corrispondono.',
     });
@@ -39,7 +39,7 @@ router.post('/register', (req, res) => {
     if (err) throw err;
 
     if (results.length > 0) {
-      return res.render('register', {
+      return res.render('user/register', {
         title: 'Registrati',
         errorMessage: 'Username già in uso.',
       });
@@ -60,7 +60,7 @@ router.post('/register', (req, res) => {
 
 // Login
 router.get('/login', (req, res) => {
-  res.render('login', { title: 'Login', errorMessage: null });
+  res.render('user/login', { title: 'Login', errorMessage: null });
 });
 
 router.post('/login', (req, res) => {
@@ -71,7 +71,7 @@ router.post('/login', (req, res) => {
     if (err) throw err;
 
     if (results.length === 0) {
-      return res.render('login', {
+      return res.render('user/login', {
         title: 'Login',
         errorMessage: 'Nome utente non trovato.',
       });
@@ -83,15 +83,21 @@ router.post('/login', (req, res) => {
 
       // Se le credenziali sono corrette
       if (match) {
-        return res.redirect(`/profile/${user.id}`); // Redirect al profilo dell'utente
+        res.cookie('userId', user.id, { maxAge: 900000, httpOnly: true });
+        return res.redirect(`/`);
       } else {
-        return res.render('login', {
+        return res.render('user/login', {
           title: 'Login',
           errorMessage: 'Password errata.',
         });
       }
     });
   });
+});
+
+router.get('/logout', (req, res) => {
+  res.clearCookie('userId'); // Rimuove il cookie
+  res.redirect('/');
 });
 
 // Profilo
@@ -106,7 +112,7 @@ router.get('/profile/:id', (req, res) => {
     }
 
     const user = results[0];
-    res.render('profile', { title: 'Il tuo profilo', user });
+    res.render('user/profile', { title: 'Il tuo profilo', user });
   });
 });
 
