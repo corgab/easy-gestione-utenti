@@ -6,6 +6,7 @@ const db = require('./models/db');
 const userRouter = require('./routes/userRoutes')(db);
 const postsRouter = require('./routes/postRouter')(db);
 const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -26,8 +27,7 @@ app.use((req, res, next) => {
 
 // Rotta principale
 app.get('/', (req, res) => {
-  // const userId = null;
-  res.render('index', { title: 'Home' }); // userId
+  res.render('index', { title: 'Home' });
 });
 
 // Utilizza il router

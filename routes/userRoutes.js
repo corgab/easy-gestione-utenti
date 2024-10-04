@@ -108,7 +108,7 @@ router.get('/profile/:id', (req, res) => {
     if (err) throw err;
 
     if (results.length === 0) {
-      return res.redirect('/login'); // Se non trovato, reindirizza al login
+      return res.redirect('/login');
     }
 
     const user = results[0];

@@ -1,0 +1,18 @@
+<div class="container mt-5">
+    <h1 class="mb-4">Crea un Post</h1>
+
+    <% if (errorMessage) { %>
+        <div class="alert alert-danger"><%= errorMessage %></div>
+    <% } %>
+
+    <form action="/create" method="POST">
+        <input type="hidden" name="userId" value="<%= userId %>">
+        <div class="form-group">
+            <label for="content">Contenuto del Post</label>
+            <textarea class="form-control" id="content" name="content" rows="4" placeholder="Scrivi qui il tuo post"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Crea Post</button>
+    </form>
+
+    <a href="/posts/<%= userId %>" class="btn btn-link mt-3">Torna ai tuoi post</a>
+</div>

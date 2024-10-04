@@ -1,0 +1,23 @@
+<div class="container mt-5">
+  <h1 class="mb-4">I tuoi Post</h1>
+
+  <a href="/posts/create" class="btn btn-primary mb-3">Crea un Nuovo Post</a>
+
+  <div class="list-group">
+      <% if (posts.length > 0) { %>
+          <% posts.forEach(post => { %>
+              <div class="list-group-item">
+                  <h5 class="mb-1">Post:</h5>
+                  <p><%= post.content %></p>
+                  <small>Creato il: <%= new Date(post.created_at).toLocaleDateString() %></small>
+              </div>
+          <% }); %>
+      <% } else { %>
+          <div class="list-group-item">
+              <p>Nessun post trovato.</p>
+          </div>
+      <% } %>
+  </div>
+
+  <a href="/profile/<%= userId %>" class="btn btn-link mt-3">Torna al Profilo</a>
+</div>
