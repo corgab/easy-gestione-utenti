@@ -133,44 +133,69 @@ router.post('/update/:id', upload.single('profile_image'), (req, res) => {
   const userId = req.params.id; // id dall'url
 
   // Inizializza la query di aggiornamento
-  let query = 'UPDATE users SET ';
-  const params = [];
-
-  let updates = []; // Array per tenere traccia degli aggiornamenti
-
-  // Se il nome utente è fornito
-  if (username && username.trim() !== '') {
-    updates.push('username = ?');
-    params.push(username);
-  }
-
-  // Se la password è fornita
-  if (password && password.trim() !== '') {
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    updates.push('password = ?');
-    params.push(hashedPassword);
-  }
-
-  // Immagine di profilo se presente
-  if (profileImage) {
-    updates.push('profile_image = ?');
-    params.push(profileImage);
-  }
-
-  // Controlla se ci sono aggiornamenti
-  if (updates.length === 0) {
-    return res.redirect(`/profile/${userId}`); // Se non ci sono campi da aggiornare
-  }
-
-  // Unisci gli aggiornamenti nella query
-  query += updates.join(', ') + ' WHERE id = ?';
-  params.push(userId);
-
-  // Esegui la query
-  db.execute(query, params, (err) => {
+  let query = 'SELECT profile_image FROM users WHERE id = ?'; // Immagine attuale
+  db.execute(query, [userId], (err, results) => {
     if (err) throw err;
 
-    res.redirect(`/profile/${userId}`);
+    // Controlliamo se l'utente esiste
+    if (results.length === 0) {
+      return res.redirect('/login'); // L'utente non esiste, reindirizza
+    }
+
+    const currentProfileImage = results[0].profile_image; // Immagine attuale
+
+    // Inizializza la query di aggiornamento
+    let updateQuery = 'UPDATE users SET ';
+    const params = [];
+    let updates = []; // Array per gli aggiornamenti
+
+    // Se il nome utente è fornito
+    if (username && username.trim() !== '') {
+      updates.push('username = ?');
+      params.push(username);
+    }
+
+    // Se la password è fornita
+    if (password && password.trim() !== '') {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      updates.push('password = ?');
+      params.push(hashedPassword);
+    }
+
+    // Se è presente una nuova immagine
+    if (profileImage) {
+      updates.push('profile_image = ?');
+      params.push(profileImage);
+    }
+
+    if (updates.length === 0) {
+      return res.redirect(`/profile/${userId}`); // Se non ci sono campi da aggiornare
+    }
+
+    // Unisci gli aggiornamenti nella query
+    updateQuery += updates.join(', ') + ' WHERE id = ?';
+    params.push(userId);
+
+    // Esegui l'aggiornamento nel database
+    db.execute(updateQuery, params, (err) => {
+      if (err) throw err;
+
+      // Elimina l'immagine attuale se cè una nuova immagine
+      if (profileImage && currentProfileImage) {
+        const imagePath = path.join(
+          __dirname,
+          '../public/images',
+          currentProfileImage
+        );
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error(`Errore nella rimozione dell'immagine: ${err}`);
+          }
+        });
+      }
+
+      res.redirect(`/profile/${userId}`);
+    });
   });
 });
 
