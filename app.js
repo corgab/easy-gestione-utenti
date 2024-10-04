@@ -27,7 +27,8 @@ app.use((req, res, next) => {
 
 // Rotta principale
 app.get('/', (req, res) => {
-  res.render('index', { title: 'Home' });
+  const userId = req.cookies.userId;
+  res.render('index', { title: 'Home', userId });
 });
 
 // Utilizza il router

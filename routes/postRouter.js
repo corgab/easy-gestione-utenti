@@ -28,8 +28,7 @@ router.post('/create', (req, res) => {
   const query = 'INSERT INTO posts (user_id, content) VALUES (?, ?)';
   db.execute(query, [userId, content], (err, results) => {
     if (err) throw err;
-
-    res.redirect(`/posts/`);
+    res.redirect(`/posts`);
   });
 });
 

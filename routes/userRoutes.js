@@ -17,12 +17,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Middleware
+const isAuthenticated = (req, res, next) => {
+  if (req.cookies.userId) {
+    return res.redirect(`/profile/${req.cookies.userId}`);
+  }
+  next();
+};
+
 // Registrazione
-router.get('/register', (req, res) => {
+router.get('/register', isAuthenticated, (req, res) => {
   res.render('user/register', { title: 'Registrati', errorMessage: null });
 });
 
-router.post('/register', (req, res) => {
+router.post('/register', isAuthenticated, (req, res) => {
   const { username, password, confirmPassword } = req.body;
 
   // Password non corrispondono
@@ -59,11 +67,11 @@ router.post('/register', (req, res) => {
 });
 
 // Login
-router.get('/login', (req, res) => {
+router.get('/login', isAuthenticated, (req, res) => {
   res.render('user/login', { title: 'Login', errorMessage: null });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', isAuthenticated, (req, res) => {
   const { username, password } = req.body;
 
   const query = 'SELECT * FROM users WHERE username = ?';
