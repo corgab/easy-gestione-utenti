@@ -130,30 +130,43 @@ router.get('/profile/:id', (req, res) => {
 router.post('/update/:id', upload.single('profile_image'), (req, res) => {
   const { username, password } = req.body;
   const profileImage = req.file ? req.file.filename : null;
-  const userId = req.params.id; // id dall url
+  const userId = req.params.id; // id dall'url
 
-  // Query di aggiornamento
-  let query = 'UPDATE users SET username = ?';
-  const params = [username];
+  // Inizializza la query di aggiornamento
+  let query = 'UPDATE users SET ';
+  const params = [];
+
+  let updates = []; // Array per tenere traccia degli aggiornamenti
+
+  // Se il nome utente è fornito
+  if (username && username.trim() !== '') {
+    updates.push('username = ?');
+    params.push(username);
+  }
 
   // Se la password è fornita
-  if (password) {
+  if (password && password.trim() !== '') {
     const hashedPassword = bcrypt.hashSync(password, 10);
-    query += ', password = ?';
+    updates.push('password = ?');
     params.push(hashedPassword);
   }
 
   // Immagine di profilo se presente
   if (profileImage) {
-    query += ', profile_image = ?';
+    updates.push('profile_image = ?');
     params.push(profileImage);
   }
 
-  // Condizione WHERE
-  query += ' WHERE id = ?';
+  // Controlla se ci sono aggiornamenti
+  if (updates.length === 0) {
+    return res.redirect(`/profile/${userId}`); // Se non ci sono campi da aggiornare
+  }
+
+  // Unisci gli aggiornamenti nella query
+  query += updates.join(', ') + ' WHERE id = ?';
   params.push(userId);
 
-  // Query
+  // Esegui la query
   db.execute(query, params, (err) => {
     if (err) throw err;
 
