@@ -4,6 +4,7 @@ const db = require('../models/db');
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const fs = require('fs'); // Per gestire il filesystem
 
 // Uupload delle immagini
 const storage = multer.diskStorage({
@@ -19,10 +20,11 @@ const upload = multer({ storage: storage });
 
 // Middleware
 const isAuthenticated = (req, res, next) => {
-  if (req.cookies.userId) {
-    return res.redirect(`/profile/${req.cookies.userId}`);
+  if (!req.cookies.userId) {
+    return next();
   }
-  next();
+  // Se il cookie esiste reindirizza al profilo
+  return res.redirect(`/profile/${req.cookies.userId}`);
 };
 
 // Registrazione
@@ -156,6 +158,53 @@ router.post('/update/:id', upload.single('profile_image'), (req, res) => {
     if (err) throw err;
 
     res.redirect(`/profile/${userId}`);
+  });
+});
+
+// Cancellazione del profilo
+router.post('/delete/:id', (req, res) => {
+  const userId = req.params.id; // Prendi l'ID dall'URL
+
+  // Se l'utente è autenticato
+  if (!req.cookies.userId || req.cookies.userId != userId) {
+    return res.status(403).send('Accesso negato.'); // Se non è l'utente
+  }
+
+  // Query per immagine profilo
+  const query = 'SELECT profile_image FROM users WHERE id = ?';
+  db.execute(query, [userId], (err, results) => {
+    if (err) throw err;
+
+    if (results.length === 0) {
+      return res.redirect('/'); // Se l'utente non esiste
+    }
+
+    const profileImage = results[0].profile_image;
+
+    // Elimina l'utente dal database
+    const deleteQuery = 'DELETE FROM users WHERE id = ?';
+    db.execute(deleteQuery, [userId], (err) => {
+      if (err) throw err;
+
+      // Se esiste un'immagine rimuovi
+      if (profileImage) {
+        const imagePath = path.join(
+          __dirname,
+          '../public/images',
+          profileImage
+        );
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error(`Errore nella rimozione dell'immagine: ${err}`);
+          } else {
+            console.log(`Immagine ${profileImage} rimossa con successo.`);
+          }
+        });
+      }
+
+      res.clearCookie('userId');
+      res.redirect('/');
+    });
   });
 });
 

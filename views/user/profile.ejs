@@ -1,11 +1,16 @@
 <div class="container mt-5">
     <h2>Il tuo profilo</h2>
     <div class="mb-3">
-        <h4>Nome Utente: <%= user.username %></h4>
+        <h4>Nome Utente: <%= user.username %>
+        </h4>
         <% if (user.profile_image) { %>
-            <img src="/images/<%= user.profile_image %>" alt="Immagine Profilo" class="img-thumbnail" style="max-width: 200px;">
-        <% } %>
+            <img src="/images/<%= user.profile_image %>" alt="Immagine Profilo" class="img-thumbnail"
+                style="max-width: 200px;">
+            <% } else { %>
+                <p>Nessuna immagine di profilo caricata.</p>
+                <% } %>
     </div>
+
     <form action="/update/<%= user.id %>" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="username">Nome Utente</label>
@@ -21,5 +26,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Aggiorna</button>
     </form>
+
+    <form action="/delete/<%= user.id %>" method="POST" class="mt-3"
+        onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
+        <button type="submit" class="btn btn-danger">Elimina Profilo</button>
+    </form>
+
     <p class="mt-3"><a href="/">Torna alla homepage</a></p>
 </div>
